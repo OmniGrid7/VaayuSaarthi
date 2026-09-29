@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VaayuSaarthi – Live Air Quality Index</title>
+
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════════════════════════════ -->
+  <nav class="navbar">
+    <div class="navbar-top">
+
+      <!-- Brand / Logo -->
+      <a class="brand" href="#">
+        <svg class="brand-logo" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-label="VaayuSaarthi logo">
+          <circle cx="40" cy="40" r="40" fill="#e8f5e9"/>
+          <!-- Speedometer arc -->
+          <path d="M15 50 A27 27 0 0 1 65 50" fill="none" stroke="#388e3c" stroke-width="5" stroke-linecap="round"/>
+          <!-- Needle -->
+          <line x1="40" y1="50" x2="52" y2="28" stroke="#e53935" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="40" cy="50" r="4" fill="#388e3c"/>
+          <!-- Tick marks -->
+          <line x1="17" y1="48" x2="20" y2="43" stroke="#388e3c" stroke-width="2"/>
+          <line x1="40" y1="23" x2="40" y2="27" stroke="#388e3c" stroke-width="2"/>
+          <line x1="63" y1="48" x2="60" y2="43" stroke="#388e3c" stroke-width="2"/>
+          <!-- Leaves -->
+          <ellipse cx="60" cy="63" rx="8" ry="4" fill="#66bb6a" transform="rotate(-30 60 63)"/>
+          <ellipse cx="55" cy="67" rx="7" ry="3.5" fill="#81c784" transform="rotate(-15 55 67)"/>
+          <!-- City silhouette -->
+          <rect x="22" y="56" width="6" height="10" fill="#388e3c" rx="1"/>
+          <rect x="30" y="52" width="5" height="14" fill="#2e7d32" rx="1"/>
+          <rect x="37" y="58" width="5" height="8"  fill="#388e3c" rx="1"/>
+        </svg>
+        <span class="brand-name">VaayuSaarthi</span>
+      </a>
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="citySearch" placeholder="Search for a city…" autocomplete="off" />
+      </div>
+
+      <!-- Login -->
+      <button class="btn-login" onclick="openLogin()">Login</button>
+    </div>
+
+    <!-- Secondary nav links -->
+    <div class="navbar-bottom">
+      <a class="nav-link active" href="#ranking">Rankings</a>
+      <a class="nav-link" href="#aqi-bulletin">AQI Bulletin</a>
+      <a class="nav-link" href="#">Resources</a>
+      <a class="nav-link" href="#" onclick="event.preventDefault(); openLang()">Language</a>
+    </div>
+  </nav>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════════════════════════════ -->
+  <main class="page">
+
+    <!-- ── AQI INDEX ──────────────────────────────────────────── -->
+    <section style="margin-bottom: 24px;">
+      <div class="section-label">AQI INDEX:</div>
+
+      <div class="aqi-row">
+
+        <!-- AQI Card -->
+        <div class="aqi-card" id="aqiCard">
+
+          <!-- Live indicator -->
+          <div class="live-badge">
+            <span class="live-dot"></span>
+            Live
+          </div>
+
+          <!-- AQI value + city selector -->
+          <div class="aqi-meta">
+            <div class="aqi-left">
+              <span class="aqi-label">Air Quality is :</span>
+              <span class="aqi-quality-badge" id="qualityBadge">Satisfactory</span>
+              <span class="aqi-value" id="aqiValue">55</span>
+            </div>
+
+            <!-- City dropdown -->
+            <div class="city-selector">
+              <button class="city-btn" id="cityBtn" onclick="toggleCityDropdown()">
+                <span id="selectedCity">Ghaziabad</span>
+                <svg width="12" height="12" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </button>
+
+              <ul class="city-dropdown" id="cityDropdown" role="listbox">
+                <li onclick="selectCity('Delhi', 168, 'Moderate')">Delhi</li>
+                <li onclick="selectCity('Ghaziabad', 55, 'Satisfactory')" class="active">Ghaziabad</li>
+                <li onclick="selectCity('Gurugram', 89, 'Satisfactory')">Gurugram</li>
+                <li onclick="selectCity('Noida', 142, 'Moderate')">Noida</li>
+                <li onclick="selectCity('Faridabad', 201, 'Poor')">Faridabad</li>
+                <li onclick="selectCity('Greater Noida', 76, 'Satisfactory')">Greater Noida</li>
+                <li onclick="selectCity('Meerut', 62, 'Satisfactory')">Meerut</li>
+                <li onclick="selectCity('Rohtak', 118, 'Moderate')">Rohtak</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 3-day AQI chart -->
+          <div class="aqi-chart-wrap">
+            <div class="chart-label">AQI Last 3 days :</div>
+            <div class="chart-canvas-wrap">
+              <canvas id="aqiChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Map -->
+        <div class="map-card">
+          <div class="map-header">
+            <svg width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="#4caf50" stroke-width="2.5" aria-hidden="true">
+              <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Live Map
+          </div>
+          <div id="live-map"></div>
+        </div>
+
+      </div><!-- /.aqi-row -->
+    </section>
+
+
+    <!-- ── MAJOR AIR POLLUTANTS ───────────────────────────────── -->
+    <section style="margin-bottom: 28px;">
+      <div class="section-title">Major Air Pollutants:</div>
+      <!-- Cards injected by script.js → renderPollutants() -->
+      <div class="pollutants-grid" id="pollutantsGrid"></div>
+    </section>
+
+
+    <!-- ── LIVE AQI RANKING ───────────────────────────────────── -->
+    <section id="ranking">
+      <div class="ranking-label-btn" id="aqi-bulletin">
+        <svg width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="#4caf50" stroke-width="2.5" aria-hidden="true">
+          <path d="M18 20V10M12 20V4M6 20v-6"/>
+        </svg>
+        Live AQI Ranking: Delhi NCR
+      </div>
+
+      <div class="ranking-card">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>City</th>
+              <th>AQI</th>
+              <th>Status</th>
+              <th>Trend</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <!-- Rows injected by script.js → renderRanking() -->
+          <tbody id="rankingBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       LANGUAGE MODAL
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="overlay" id="langOverlay" onclick="closeLang(event)" role="dialog" aria-modal="true" aria-label="Select Language">
+    <div class="modal" onclick="event.stopPropagation()" style="width: 320px;">
+      <h3>Select Language</h3>
+      <p>Choose your preferred language / अपनी भाषा चुनें</p>
+      <div class="lang-grid">
+        <button class="lang-btn" onclick="setLang('en')">🇬🇧 English</button>
+        <button class="lang-btn" onclick="setLang('hi')">🇮🇳 हिन्दी</button>
+        <button class="lang-btn" onclick="setLang('mr')">मराठी</button>
+        <button class="lang-btn" onclick="setLang('bn')">বাংলা</button>
+        <button class="lang-btn" onclick="setLang('ta')">தமிழ்</button>
+        <button class="lang-btn" onclick="setLang('te')">తెలుగు</button>
+        <button class="lang-btn" onclick="setLang('gu')">ગુજરાતી</button>
+        <button class="lang-btn" onclick="setLang('kn')">ಕನ್ನಡ</button>
+      </div>
+      <button class="btn-secondary"
+              onclick="document.getElementById('langOverlay').classList.remove('open')">
+        Close
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       LOGIN MODAL
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="overlay" id="loginOverlay" onclick="closeLogin(event)" role="dialog" aria-modal="true" aria-label="Login">
+    <div class="modal" onclick="event.stopPropagation()" style="width: 340px;">
+      <button class="modal-close"
+              onclick="document.getElementById('loginOverlay').classList.remove('open')"
+              aria-label="Close">✕</button>
+      <h3>Welcome Back</h3>
+      <p>Sign in to VaayuSaarthi for personalized air quality alerts.</p>
+
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" />
+      </div>
+
+      <button class="btn-primary">Login</button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       SCRIPTS  (libraries first, then app)
+  ═══════════════════════════════════════════════════════════════ -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/script.js"></script>
+
+</body>
+</html>
