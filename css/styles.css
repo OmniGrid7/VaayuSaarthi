@@ -42,7 +42,7 @@ body {
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1200;
 }
 
 .navbar-top {
@@ -56,20 +56,16 @@ body {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   flex-shrink: 0;
+  padding: 5px 12px;
 }
 
-.brand-logo {
-  width: 42px;
-  height: 42px;
-}
-
-.brand-name {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--green-dark);
+.brand-image {
+  display: block;
+  width: 252px;
+  height: 62px;
+  object-fit: contain;
 }
 
 /* Search Bar */
@@ -127,13 +123,85 @@ body {
 }
 
 /* Nav Links */
+.route-page { display: none; }
+.route-page.active { display: block; }
 .navbar-bottom {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   padding: 0 24px 8px;
   gap: 28px;
+  flex-wrap: wrap;
 }
+
+.language-menu {
+  position: relative;
+  margin-left: auto;
+}
+
+.language-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  background: var(--white);
+  color: var(--text-dark);
+  font: 600 12px 'Inter', sans-serif;
+  cursor: pointer;
+}
+
+.language-toggle:hover,
+.language-toggle[aria-expanded="true"] {
+  border-color: var(--green-primary);
+  color: var(--green-dark);
+}
+
+.language-toggle:focus-visible,
+.language-option:focus-visible {
+  outline: 2px solid var(--green-primary);
+  outline-offset: 2px;
+}
+
+.language-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 1100;
+  min-width: 142px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.language-options[hidden] { display: none; }
+
+.language-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: 0;
+  border-radius: 3px;
+  padding: 8px 9px;
+  background: transparent;
+  color: var(--text-dark);
+  font: 500 13px 'Inter', sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+
+.language-option:hover,
+.language-option[aria-pressed="true"] {
+  background: #edf6ef;
+  color: var(--green-dark);
+}
+
+.language-check { visibility: hidden; color: var(--green-primary); }
+.language-option[aria-pressed="true"] .language-check { visibility: visible; }
 
 .nav-link {
   font-size: 13px;
@@ -344,6 +412,9 @@ body {
 
 /* ── Map Card ──────────────────────────────────────────────── */
 .map-card {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
   border: 1.5px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
@@ -673,9 +744,166 @@ body {
   .pollutants-grid    { grid-template-columns: repeat(2, 1fr); }
   .aqi-value          { font-size: 42px; }
   .navbar-top         { padding: 10px 14px; }
+  .brand              { padding: 3px 0; }
+  .brand-image        { width: 190px; height: 48px; }
+  .navbar-bottom      { padding: 0 14px 9px; gap: 14px; }
   .page               { padding: 14px 10px 32px; }
 }
 
 @media (max-width: 400px) {
   .pollutants-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Forecast and atmosphere views ─────────────────────────── */
+:root {
+  --ink: #172923;
+  --muted-ink: #64736e;
+  --line: #dfe7e2;
+  --surface: #fff;
+  --mint: #e9f4ed;
+  --amber: #d58a35;
+}
+
+.page { max-width: 1120px; padding-top: 28px; }
+.dashboard-heading, .section-heading-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.dashboard-heading { margin: 10px 0 26px; align-items: center; }
+.dashboard-heading h1 { color: var(--ink); font-size: 30px; line-height: 1.15; }
+.eyebrow { color: #26734b; font-size: 10px; font-weight: 800; letter-spacing: 1.2px; margin-bottom: 8px; }
+.dashboard-subtitle, .section-description { color: var(--muted-ink); font-size: 13px; line-height: 1.55; margin-top: 7px; }
+.prototype-tag, .scenario-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e9d8bf;
+  background: #fff8ed;
+  color: #80571f;
+  padding: 8px 11px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+}
+.prototype-tag > span:first-child { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: var(--amber); }
+.aqi-row { grid-template-columns: 1fr 1.08fr; }
+.forecast-section, .atmosphere-section { margin: 38px 0 34px; }
+.section-heading-row { align-items: center; margin-bottom: 16px; }
+.section-heading-row h2 { color: var(--ink); font-size: 22px; line-height: 1.2; }
+.section-heading-row .eyebrow { margin-bottom: 5px; }
+.metric-tabs { display: flex; gap: 3px; border: 1px solid var(--line); background: #f0f4f1; padding: 3px; border-radius: 5px; flex-shrink: 0; }
+.metric-tab { border: 0; border-radius: 3px; background: transparent; color: var(--muted-ink); padding: 8px 12px; font: 700 12px 'Inter', sans-serif; cursor: pointer; }
+.metric-tab:hover { color: var(--ink); }
+.metric-tab.active { background: var(--ink); color: white; }
+.forecast-chart-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 18px 20px 13px; }
+.forecast-chart-meta { display: flex; justify-content: space-between; gap: 12px; align-items: center; color: var(--ink); font-size: 13px; font-weight: 700; }
+.forecast-model-note, .legend-sample { color: var(--muted-ink); font-size: 11px; font-weight: 500; }
+.forecast-chart-wrap { height: 250px; margin-top: 10px; }
+.chart-legend { display: flex; align-items: center; gap: 8px; color: var(--muted-ink); font-size: 11px; }
+.legend-line { width: 18px; height: 3px; background: #208359; border-radius: 2px; }
+.legend-sample { margin-left: auto; }
+.daily-forecast-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.daily-card { background: #f5f8f5; border-left: 3px solid #62a883; padding: 14px 16px; min-width: 0; }
+.daily-card h3 { color: var(--ink); font-size: 13px; margin-bottom: 11px; }
+.daily-card-main { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.daily-card-main strong { color: var(--ink); font-size: 27px; }
+.daily-card-main span { color: var(--muted-ink); font-size: 11px; }
+.daily-pollutants { display: flex; gap: 16px; border-top: 1px solid var(--line); margin-top: 11px; padding-top: 9px; }
+.daily-pollutants span { color: var(--muted-ink); font-size: 10px; }
+.daily-pollutants strong { display: block; color: var(--ink); font-size: 12px; margin-top: 3px; }
+.atmosphere-heading { margin-bottom: 16px; }
+.atmosphere-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 14px; }
+.conditions-panel, .plume-panel { border: 1px solid var(--line); border-radius: 7px; background: var(--surface); padding: 20px; }
+.conditions-panel h3, .plume-panel h3 { color: var(--ink); font-size: 15px; }
+.condition-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 17px 0 18px; }
+.condition-item { min-width: 0; }
+.condition-item > span { display: block; color: var(--muted-ink); font-size: 10px; min-height: 24px; }
+.condition-item strong { color: var(--ink); font-size: 20px; white-space: nowrap; }
+.condition-item strong small { font-size: 11px; font-weight: 600; }
+.condition-item em { display: block; color: #52705f; font-size: 10px; font-style: normal; margin-top: 5px; }
+.inversion-panel { border-top: 1px solid var(--line); padding-top: 13px; }
+.inversion-heading { display: flex; justify-content: space-between; gap: 10px; color: var(--ink); font-size: 11px; }
+.inversion-heading strong { color: #a96025; }
+.inversion-heading b { color: var(--muted-ink); font-weight: 600; margin-left: 5px; }
+.inversion-scale { height: 6px; border-radius: 9px; background: linear-gradient(90deg, #74b786 0 35%, #e9bd69 60%, #d77759 100%); margin: 10px 0 8px; position: relative; }
+.inversion-scale span { position: absolute; left: 63%; top: -3px; width: 12px; height: 12px; border: 2px solid white; border-radius: 50%; background: #a96025; box-shadow: 0 0 0 1px #a96025; }
+.inversion-panel p { color: var(--muted-ink); font-size: 10px; line-height: 1.5; }
+.plume-panel { background: #f6f8f3; }
+.plume-topline { display: flex; align-items: center; gap: 8px; color: #60736a; font-size: 9px; font-weight: 800; letter-spacing: 1px; }
+.plume-icon { display: grid; place-items: center; width: 26px; height: 26px; background: #e4eee6; color: #26734b; font-size: 18px; border-radius: 50%; }
+.plume-panel h3 { margin-top: 13px; }
+.plume-risk { display: flex; align-items: center; gap: 7px; color: #9a5d20; font-size: 12px; font-weight: 700; margin: 12px 0 17px; }
+.plume-risk span { width: 7px; height: 7px; background: #d58a35; border-radius: 50%; }
+.plume-route { display: flex; align-items: center; gap: 9px; color: var(--muted-ink); font-size: 10px; }
+.plume-route strong { color: var(--ink); white-space: nowrap; }
+.route-dashes { height: 1px; flex: 1; min-width: 18px; border-top: 2px dashed #c58a4c; position: relative; }
+.route-dashes::after { content: ''; position: absolute; right: -1px; top: -5px; border: 4px solid transparent; border-left-color: #c58a4c; }
+.plume-details { display: flex; gap: 32px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); }
+.plume-details span { color: var(--muted-ink); font-size: 10px; }
+.plume-details strong { display: block; color: var(--ink); font-size: 12px; margin-top: 4px; }
+.plume-disclaimer { color: #777e77; font-size: 9px; line-height: 1.5; margin-top: 14px; }
+.feedback-note { display: flex; align-items: center; gap: 14px; margin-top: 12px; padding: 14px 16px; background: #edf4ef; border-radius: 5px; }
+.feedback-mark { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 30px; border-radius: 50%; background: #d7e9dc; color: #26734b; font-size: 17px; }
+.feedback-note strong { color: var(--ink); font-size: 12px; }
+.feedback-note p { color: var(--muted-ink); font-size: 10px; line-height: 1.5; margin-top: 4px; }
+.feedback-state { margin-left: auto; color: #80571f; background: #fff8ed; padding: 6px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.data-note { color: #6c7771; font-size: 10px; line-height: 1.6; margin: 22px 0 28px; }
+
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  min-height: 68px;
+  margin-top: 20px;
+  padding: 26px 18px 14px;
+  background: #208359;
+  color: #eaf2ed;
+  text-align: center;
+  font-size: 12px;
+}
+.site-footer::before {
+  position: absolute;
+  top: -9px;
+  left: -4%;
+  width: 108%;
+  height: 19px;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: #62a883;
+  content: '';
+}
+.site-footer p { position: relative; }
+.site-footer strong { color: white; font-weight: 700; }
+
+@media (max-width: 760px) {
+  .page { padding: 18px 14px 34px; }
+  .dashboard-heading { align-items: flex-start; flex-direction: column; gap: 13px; }
+  .dashboard-heading h1 { font-size: 26px; }
+  .section-heading-row { align-items: flex-start; flex-direction: column; gap: 13px; }
+  .aqi-row, .atmosphere-grid { grid-template-columns: minmax(0, 1fr); }
+  .aqi-row > *, .map-card, #live-map { min-width: 0; width: 100%; }
+  .condition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .forecast-chart-wrap { height: 210px; }
+}
+@media (max-width: 480px) {
+  .metric-tabs { width: 100%; }
+  .metric-tab { flex: 1; padding: 8px 5px; }
+  .daily-forecast-grid { grid-template-columns: 1fr; }
+  .daily-card { display: grid; grid-template-columns: 1fr auto; align-items: center; }
+  .daily-card h3 { margin: 0; }
+  .daily-pollutants { grid-column: 1 / -1; }
+  .forecast-chart-panel { padding: 14px 12px 11px; }
+  .forecast-model-note { max-width: 150px; text-align: right; line-height: 1.4; }
+  .feedback-note { align-items: flex-start; flex-wrap: wrap; }
+  .feedback-note > div { flex: 1; min-width: 0; }
+  .feedback-state { margin-left: 44px; }
+  .prototype-tag, .scenario-tag { white-space: normal; }
+}
+
+@media (max-width: 420px) {
+  .navbar-top { flex-wrap: wrap; }
+  .brand-image { width: 170px; height: 44px; }
+  .search-wrap { order: 3; flex-basis: 100%; max-width: none; }
+  .language-menu { margin-left: auto; }
 }

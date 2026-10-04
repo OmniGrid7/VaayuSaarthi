@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 86" role="img" aria-labelledby="title">
+  <title id="title">VaayuSaarthi: Know the air you breathe</title>
+  <path d="M22 61a34 34 0 0 1 6-42" fill="none" stroke="#258348" stroke-width="8" stroke-linecap="round"/>
+  <path d="M29 19A34 34 0 0 1 61 9" fill="none" stroke="#c76e34" stroke-width="8" stroke-linecap="round"/>
+  <path d="M61 9a34 34 0 0 1 29 17" fill="none" stroke="#ba3834" stroke-width="8" stroke-linecap="round"/>
+  <path d="m47 47 33-19-12 37-8-12-13-6z" fill="#164a9e" stroke="#103c82" stroke-linejoin="round" stroke-width="2"/>
+  <text x="105" y="45" fill="#101719" font-family="Arial, sans-serif" font-size="39" font-weight="700" letter-spacing="-1">Vaayu<tspan fill="#17459b">Saarthi</tspan></text>
+  <path d="M106 55h153q9 0 9-7" fill="none" stroke="#087b70" stroke-linecap="round" stroke-width="4"/>
+  <text x="107" y="78" fill="#27323c" font-family="Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="4.1">KNOW THE AIR YOU BREATHE</text>
+</svg>
