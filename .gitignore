@@ -1,6 +1,10 @@
 # Vercel
 .vercel
 
+# Node and build output
+node_modules/
+dist/
+
 # OS
 .DS_Store
 Thumbs.db
